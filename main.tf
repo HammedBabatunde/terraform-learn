@@ -125,13 +125,7 @@ resource "aws_instance" "my-app-server" {
     key_name = aws_key_pair.ssh_key.key_name
     # key_name = "nexusdemo-key"
 
-    user_data = <<EOF
-                    #!/bin/sh
-                    sudo yum update -y && sudo yum install -y docker
-                    sudo systemctl start docker
-                    sudo usermod -aG docker ec2-user
-                    docker run -p 8080:80 nginx
-                EOF
+    user_data = file("entry-script.sh")
 
     tags = {
         Name = "${var.env_prefix}-server"
