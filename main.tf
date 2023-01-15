@@ -127,6 +127,7 @@ resource "aws_instance" "my-app-server" {
 
     # user_data = file("entry-script.sh")
 
+    ## Terraform does not recommend Provisioners. Use Ansible or Chef instead.
     connection {
       type = "ssh"
       host = self.public_ip
@@ -134,12 +135,19 @@ resource "aws_instance" "my-app-server" {
       private_key = file(var.private_key_location)
     }
 
-    provisioner "remote-exec" {
-      inline = [
-        "export ENV=dev",
-        "mkdir newdir"
-      ]
+    provisioner "file" {
+      source = "entry-script.sh"
+      destination = "/home/ec2-user/entry-script.sh"
     }
+
+    provisioner "remote-exec" {
+      script = file("entry-script.sh")
+    }
+
+    provisioner "local-exec" {
+        command = "echo ${self.public_ip} > ip.txt"
+    }
+
     tags = {
         Name = "${var.env_prefix}-server"
     }
