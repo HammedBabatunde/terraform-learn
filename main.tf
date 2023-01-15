@@ -1,6 +1,6 @@
 provider "aws" { 
     region = "us-east-1"
- }
+}
 
 variable vpc_cidr_block {}
 variable subnet_cidr_block {}
@@ -9,6 +9,7 @@ variable env_prefix {}
 variable my_ip {}
 variable "instance_type" {}
 variable "public_key_location" {}
+variable "private_key_location" {}
 
 resource "aws_vpc" "myapp-vpc" {
     cidr_block = var.vpc_cidr_block
@@ -104,7 +105,6 @@ output "aws_ami_id" {
 
 output "ec2_public_ip" {
     value = aws_instance.my-app-server.public_ip 
-  
 }
 
 resource "aws_key_pair" "ssh_key" {
@@ -125,8 +125,21 @@ resource "aws_instance" "my-app-server" {
     key_name = aws_key_pair.ssh_key.key_name
     # key_name = "nexusdemo-key"
 
-    user_data = file("entry-script.sh")
+    # user_data = file("entry-script.sh")
 
+    connection {
+      type = "ssh"
+      host = self.public_ip
+      user = "ec2-user"
+      private_key = file(var.private_key_location)
+    }
+
+    provisioner "remote-exec" {
+      inline = [
+        "export ENV=dev",
+        "mkdir newdir"
+      ]
+    }
     tags = {
         Name = "${var.env_prefix}-server"
     }
