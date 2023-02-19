@@ -7,6 +7,7 @@ module "eks" {
 
   subnet_ids = module.myapp-vpc.private_subnets
   vpc_id = module.myapp-vpc.vpc_id
+  cluster_endpoint_public_access = true
 
   tags = {
     environment = "development"
@@ -24,16 +25,4 @@ module "eks" {
   }
 
 
-#   eks_managed_node_groups = [
-#     {
-#       name = "managed-node-group-1"
-#       instance_type = "t2.small"
-#       asg_desired_capacity = 2
-#     },
-#     {
-#       name = "managed-node-group-2"
-#       instance_type = "t2.medium"
-#       asg_desired_capacity = 1
-#     }
-#   ]
 }
