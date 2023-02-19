@@ -42,7 +42,7 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.5.1"
+  version = "19.10.0"
 
   cluster_name    = local.cluster_name
   cluster_version = "1.24"
@@ -65,16 +65,6 @@ module "eks" {
       min_size     = 1
       max_size     = 3
       desired_size = 2
-    }
-
-    two = {
-      name = "node-group-2"
-
-      instance_types = ["t3.small"]
-
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
     }
   }
 }
